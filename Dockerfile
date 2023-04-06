@@ -1,4 +1,4 @@
-FROM adoptopenjdk/maven-openjdk11:latest AS compile
+FROM maven:3.8.3-openjdk-17 AS compile
 
 COPY . .
 
