@@ -19,3 +19,15 @@ services:
       - ./data:/opt/jboss/keycloak/standalone/data
     networks:
       - grupo8
+  auth-backend:
+    container_name: auth-backend
+    # build:
+    #   context: docker-auth-backend
+    #   dockerfile: Dockerfile
+    # image: auth-backend:latest
+    build: .
+    ports:
+      - 8080:8080
+    networks:
+      - grupo8
+
