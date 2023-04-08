@@ -41,7 +41,7 @@ public class AuthController {
 
         } catch (Exception e) {
             // TODO: handle exception
-            return new ResponseEntity<>("Foi", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
     }

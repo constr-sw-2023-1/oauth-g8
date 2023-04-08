@@ -23,7 +23,7 @@ services:
     container_name: auth-backend
     build: .
     ports:
-      - 8080:8080
+      - 8143:8143
     networks:
       - grupo8
 
