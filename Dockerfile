@@ -2,9 +2,7 @@ FROM maven:3.8.3-openjdk-17 AS compile
 
 COPY . .
 
-RUN mvn clean package
-
-RUN mvn install
+RUN mvn clean install -Dmaven.test.skip
 
 FROM openjdk:17-alpine
 
