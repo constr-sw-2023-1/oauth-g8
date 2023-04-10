@@ -16,31 +16,33 @@ import java.util.stream.Collectors;
 @Service
 public class AuthService {
 
-    public HttpResponse<?> login(String clientId, String clientSecret, String grantType)
-            throws URISyntaxException, IOException, InterruptedException {
+        public HttpResponse<?> login(String clientId, String clientSecret, String grantType)
+                        throws URISyntaxException, IOException, InterruptedException {
 
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("client_id", clientId);
-        parameters.put("client_secret", clientSecret);
-        parameters.put("grant_type", grantType);
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put("client_id", clientId);
+                parameters.put("client_secret", clientSecret);
+                parameters.put("grant_type", grantType);
 
-        String form = parameters.entrySet()
-                .stream()
-                .map(e -> e.getKey() + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
-                .collect(Collectors.joining("&"));
+                String form = parameters.entrySet()
+                                .stream()
+                                .map(e -> e.getKey() + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
+                                .collect(Collectors.joining("&"));
 
-        HttpClient client = HttpClient.newHttpClient();
+                HttpClient client = HttpClient.newHttpClient();
 
-        HttpRequest request = HttpRequest
-                .newBuilder()
-                .uri(new URI("http://localhost:8090/auth/realms/constr-sw-2023-1/protocol/openid-connect/token"))
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .POST(HttpRequest.BodyPublishers.ofString(form, StandardCharsets.UTF_8))
-                .build();
+                System.out.println("teste");
 
-        HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                HttpRequest request = HttpRequest
+                                .newBuilder()
+                                .uri(new URI("http://keycloak:8080/auth/realms/constr-sw-2023-1/protocol/openid-connect/token"))
+                                .header("Content-Type", "application/x-www-form-urlencoded")
+                                .POST(HttpRequest.BodyPublishers.ofString(form, StandardCharsets.UTF_8))
+                                .build();
 
-        return response;
-    }
+                HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+                return response;
+        }
 
 }

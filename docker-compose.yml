@@ -1,9 +1,8 @@
 version: '3.4'
 networks:
   grupo8:
-# volumes:
-#   grupo8-keycloak-data:
-#     external: true
+    driver: bridge
+
 services:
   # Keycloak
   keycloak:
@@ -11,6 +10,7 @@ services:
     image: jboss/keycloak:latest
     ports:
       - 8090:8080
+      - 8090:8070
     environment:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=a12345678
@@ -19,6 +19,7 @@ services:
       - ./data:/opt/jboss/keycloak/standalone/data
     networks:
       - grupo8
+   # Auth Backend   
   auth-backend:
     container_name: auth-backend
     build: .
