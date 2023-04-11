@@ -12,21 +12,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    public HttpResponse<?> getUsers() throws URISyntaxException, IOException, InterruptedException {
+    public HttpResponse<?> getUsers(String bearerToken) throws URISyntaxException, IOException, InterruptedException {
 
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI("http://keycloak:8080/auth/admin/realms/constr-sw-2023-1/users"))
+                .setHeader("Authorization", bearerToken)
                 .GET()
                 .build();
 
+        // TODO adicionar tratamento de resposta
         HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        System.out.println(response.body());
-
         return response;
-
     }
 
 }

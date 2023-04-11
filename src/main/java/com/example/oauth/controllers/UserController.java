@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,10 +23,10 @@ public class UserController {
     UserService userService;
 
     @GetMapping
-    public ResponseEntity<?> getUsers() {
+    public ResponseEntity<?> getUsers(@RequestHeader("Authorization") String bearerToken) {
 
         try {
-            HttpResponse<?> response = userService.getUsers();
+            HttpResponse<?> response = userService.getUsers(bearerToken);
 
             return new ResponseEntity<>(response.body(), HttpStatus.OK);
         } catch (Exception e) {
