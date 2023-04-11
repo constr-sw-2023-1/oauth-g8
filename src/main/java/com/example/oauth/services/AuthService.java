@@ -31,8 +31,6 @@ public class AuthService {
 
                 HttpClient client = HttpClient.newHttpClient();
 
-                System.out.println("teste");
-
                 HttpRequest request = HttpRequest
                                 .newBuilder()
                                 .uri(new URI("http://keycloak:8080/auth/realms/constr-sw-2023-1/protocol/openid-connect/token"))
