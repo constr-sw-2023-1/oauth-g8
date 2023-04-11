@@ -16,6 +16,17 @@ import java.util.stream.Collectors;
 @Service
 public class AuthService {
 
+        /**
+         * Obtém um token de acesso para autenticação
+         * 
+         * @param clientId
+         * @param clientSecret
+         * @param grantType
+         * @return
+         * @throws URISyntaxException
+         * @throws IOException
+         * @throws InterruptedException
+         */
         public HttpResponse<?> login(String clientId, String clientSecret, String grantType)
                         throws URISyntaxException, IOException, InterruptedException {
 
@@ -30,8 +41,6 @@ public class AuthService {
                                 .collect(Collectors.joining("&"));
 
                 HttpClient client = HttpClient.newHttpClient();
-
-                System.out.println("teste");
 
                 HttpRequest request = HttpRequest
                                 .newBuilder()
