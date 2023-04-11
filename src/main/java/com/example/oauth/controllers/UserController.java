@@ -4,9 +4,9 @@ import java.net.http.HttpResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -50,6 +50,25 @@ public class UserController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@RequestHeader("Authorization") String bearerToken, @PathVariable String id) {
+        try {
+            HttpResponse<?> response = userService.getUserById(bearerToken, id);
+
+            return new ResponseEntity<>(response.body(), HttpStatus.OK);
+        } catch (Exception e) {
+            // TODO: handle exception
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Deleção de um usuário
+     * 
+     * @param bearerToken
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@RequestHeader("Authorization") String bearerToken, @PathVariable String id) {
         try {
             HttpResponse<?> response = userService.getUserById(bearerToken, id);
 

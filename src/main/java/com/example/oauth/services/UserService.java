@@ -62,4 +62,30 @@ public class UserService {
         return response;
     }
 
+    /**
+     * Deleta um usuário de acordo com o id enviado por parâmetro
+     * 
+     * @param bearerToken Token de autenticação
+     * @param id          Id do usuário
+     * @return
+     * @throws URISyntaxException
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public HttpResponse<?> deleteUser(String bearerToken, String id)
+            throws URISyntaxException, IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI("http://keycloak:8080/auth/admin/realms/constr-sw-2023-1/users/" + id))
+                .setHeader("Authorization", bearerToken)
+                .DELETE()
+                .build();
+
+        // TODO adicionar tratamento de resposta
+        HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        return response;
+    }
+
 }
