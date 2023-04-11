@@ -23,17 +23,19 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    private LoginForm loginForm;
-
+    /**
+     * Rota de autenticação que gera o token de acesso
+     * 
+     * @param clientId
+     * @param clientSecret
+     * @param grantType
+     * @return
+     */
     @PostMapping()
     public ResponseEntity<?> login(
             @RequestParam("client_id") String clientId,
             @RequestParam("client_secret") String clientSecret,
             @RequestParam("grant_type") String grantType) {
-
-        // loginForm.setClientId(clientId);
-        // loginForm.setClientSecret(clientSecret);
-        // loginForm.setGrantType(grantType);
 
         try {
             HttpResponse<?> response = authService.login(clientId, clientSecret, grantType);
