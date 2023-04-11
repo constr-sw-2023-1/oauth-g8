@@ -10,7 +10,6 @@ services:
     image: jboss/keycloak:latest
     ports:
       - 8090:8080
-      - 8090:8070
     environment:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=a12345678
