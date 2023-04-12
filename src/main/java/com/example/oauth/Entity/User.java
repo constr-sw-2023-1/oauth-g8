@@ -11,7 +11,7 @@ public class User {
     private String clientId;
     private String clientSecret;
     private String username;
-    private String password;
-    private String grantType;
+    private String credentials;
+    private String grant_type;
 
 }

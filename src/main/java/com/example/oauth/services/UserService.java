@@ -9,7 +9,9 @@ import java.net.http.HttpResponse;
 
 import org.springframework.stereotype.Service;
 
-import com.example.oauth.Entity.User;
+import com.example.oauth.Entity.PutUserDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.nio.charset.StandardCharsets;
 
 @Service
 public class UserService {
@@ -101,21 +103,22 @@ public class UserService {
      * @throws IOException
      * @throws InterruptedException
      */
-    public HttpResponse<?> updateUser(String bearerToken, String id, User user)
+    public HttpResponse<?> updateUser(String bearerToken, String id, PutUserDTO user)
             throws URISyntaxException, IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        String userJson = objectMapper.writeValueAsString(user);
+
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI("http://localhost:8090/auth/admin/realms/constr-sw-2023-1/users/" + id))
+                .uri(new URI("http://keycloak:8080/auth/admin/realms/constr-sw-2023-1/users/" + id))
                 .setHeader("Authorization", bearerToken)
-                // .PUT(HttpRequest.BodyPublishers.ofString(user, StandardCharsets.UTF_8))
-                // Alterar a forma com que é enviado o body da requisição
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.ofString(userJson, StandardCharsets.UTF_8))
                 .build();
 
-        // TODO adicionar tratamento de resposta
         HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         return response;
     }
-
 }

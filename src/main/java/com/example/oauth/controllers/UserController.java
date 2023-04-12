@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.oauth.Entity.User;
+import com.example.oauth.Entity.PutUserDTO;
 import com.example.oauth.services.UserService;
 
 @CrossOrigin
@@ -84,7 +84,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String bearerToken, @PathVariable String id,
-            @RequestBody User user) {
+            @RequestBody PutUserDTO user) {
         try {
             HttpResponse<?> response = userService.updateUser(bearerToken, id, user);
 
