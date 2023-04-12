@@ -9,6 +9,7 @@ import java.net.http.HttpResponse;
 
 import org.springframework.stereotype.Service;
 
+import com.example.oauth.Entity.PasswordDTO;
 import com.example.oauth.Entity.PutUserDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
@@ -115,6 +116,25 @@ public class UserService {
                 .setHeader("Authorization", bearerToken)
                 .header("Content-Type", "application/json")
                 .PUT(HttpRequest.BodyPublishers.ofString(userJson, StandardCharsets.UTF_8))
+                .build();
+
+        HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        return response;
+    }
+
+    public HttpResponse<?> updatePassword(String bearerToken, String id, PasswordDTO password)
+            throws URISyntaxException, IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String credentialsJson = objectMapper.writeValueAsString(password);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI("http://keycloak:8080/auth/admin/realms/constr-sw-2023-1/users/" + id + "/reset-password"))
+                .setHeader("Authorization", bearerToken)
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.ofString(credentialsJson))
                 .build();
 
         HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
