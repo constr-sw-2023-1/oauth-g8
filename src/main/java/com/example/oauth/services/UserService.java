@@ -41,6 +41,22 @@ public class UserService {
         return response;
     }
 
+    public HttpResponse<?> createUser(String bearerToken, String userJson)
+        throws URISyntaxException, IOException, InterruptedException {
+    HttpClient client = HttpClient.newHttpClient();
+
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(new URI("http://keycloak:8080/auth/admin/realms/constr-sw-2023-1/users"))
+            .setHeader("Authorization", bearerToken)
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(userJson))
+            .build();
+            
+    HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+    return response;
+}
+
     /**
      * Retorna um usuário de acordo com o id enviado por parâmetro
      * 
