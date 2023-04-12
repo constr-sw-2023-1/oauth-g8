@@ -22,18 +22,23 @@ public class AuthService {
          * @param clientId
          * @param clientSecret
          * @param grantType
+         * @param username
+         * @param password
          * @return
          * @throws URISyntaxException
          * @throws IOException
          * @throws InterruptedException
          */
-        public HttpResponse<?> login(String clientId, String clientSecret, String grantType)
+        public HttpResponse<?> login(String clientId, String clientSecret, String grantType, String username,
+                        String password)
                         throws URISyntaxException, IOException, InterruptedException {
 
                 Map<String, String> parameters = new HashMap<>();
                 parameters.put("client_id", clientId);
                 parameters.put("client_secret", clientSecret);
                 parameters.put("grant_type", grantType);
+                parameters.put("username", username);
+                parameters.put("password", password);
 
                 String form = parameters.entrySet()
                                 .stream()
