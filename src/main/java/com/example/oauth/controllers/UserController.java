@@ -9,10 +9,13 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.oauth.Entity.User;
 import com.example.oauth.services.UserService;
 
 @CrossOrigin
@@ -71,6 +74,19 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@RequestHeader("Authorization") String bearerToken, @PathVariable String id) {
         try {
             HttpResponse<?> response = userService.getUserById(bearerToken, id);
+
+            return new ResponseEntity<>(response.body(), HttpStatus.OK);
+        } catch (Exception e) {
+            // TODO: handle exception
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String bearerToken, @PathVariable String id,
+            @RequestBody User user) {
+        try {
+            HttpResponse<?> response = userService.updateUser(bearerToken, id, user);
 
             return new ResponseEntity<>(response.body(), HttpStatus.OK);
         } catch (Exception e) {
