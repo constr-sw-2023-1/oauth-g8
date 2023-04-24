@@ -44,14 +44,11 @@ public class AuthController {
     @PostMapping(consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE })
     @ApiImplicitParam(name = "form", dataType = "string", paramType = "form")
     public ResponseEntity<?> login(
-            @RequestParam("client_id") String clientId,
-            @RequestParam("client_secret") String clientSecret,
-            @RequestParam("grant_type") String grantType,
             @RequestParam("username") String username,
             @RequestParam("password") String password) {
 
         try {
-            HttpResponse<?> response = authService.login(clientId, clientSecret, grantType, username, password);
+            HttpResponse<?> response = authService.login(username, password);
             return new ResponseEntity<>(response.body(), HttpStatus.OK);
 
         } catch (Exception e) {

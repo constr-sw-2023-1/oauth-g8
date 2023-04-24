@@ -1,5 +1,6 @@
 package com.example.oauth.services;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URI;
@@ -16,21 +17,19 @@ import java.util.stream.Collectors;
 @Service
 public class AuthService {
 
-        /**
-         * Obtém um token de acesso para autenticação
-         * 
-         * @param clientId
-         * @param clientSecret
-         * @param grantType
-         * @param username
-         * @param password
-         * @return
-         * @throws URISyntaxException
-         * @throws IOException
-         * @throws InterruptedException
-         */
-        public HttpResponse<?> login(String clientId, String clientSecret, String grantType, String username,
-                        String password)
+        private final String clientId;
+        private final String clientSecret;
+        private final String grantType;
+
+        public AuthService(@Value("${spring.security.oauth2.client.registration.keycloak.client-id}") String clientId,
+                        @Value("${spring.security.oauth2.client.registration.keycloak.client-secret}") String clientSecret,
+                        @Value("${spring.security.oauth2.client.registration.keycloak.authorization-grant-type}") String grantType) {
+                this.clientId = clientId;
+                this.clientSecret = clientSecret;
+                this.grantType = grantType;
+        }
+
+        public HttpResponse<?> login(String username, String password)
                         throws URISyntaxException, IOException, InterruptedException {
 
                 Map<String, String> parameters = new HashMap<>();
@@ -49,7 +48,7 @@ public class AuthService {
 
                 HttpRequest request = HttpRequest
                                 .newBuilder()
-                                .uri(new URI("http://keycloak:8080/auth/realms/constr-sw-2023-1/protocol/openid-connect/token"))
+                                .uri(URI.create("http://keycloak:8080/auth/realms/constr-sw-2023-1/protocol/openid-connect/token"))
                                 .header("Content-Type", "application/x-www-form-urlencoded")
                                 .POST(HttpRequest.BodyPublishers.ofString(form, StandardCharsets.UTF_8))
                                 .build();

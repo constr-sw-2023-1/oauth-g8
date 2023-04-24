@@ -11,150 +11,157 @@ import org.springframework.stereotype.Service;
 
 import com.example.oauth.Entity.PasswordDTO;
 import com.example.oauth.Entity.PutUserDTO;
+import com.example.oauth.Entity.UserDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 
 @Service
 public class UserService {
 
-    /**
-     * Retorna todos os usuários cadastrados
-     * 
-     * @param bearerToken Token de autenticação
-     * @return
-     * @throws URISyntaxException
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    public HttpResponse<?> getUsers(String bearerToken) throws URISyntaxException, IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
+        /**
+         * Retorna todos os usuários cadastrados
+         * 
+         * @param bearerToken Token de autenticação
+         * @return
+         * @throws URISyntaxException
+         * @throws IOException
+         * @throws InterruptedException
+         */
+        public HttpResponse<?> getUsers(String bearerToken)
+                        throws URISyntaxException, IOException, InterruptedException {
+                HttpClient client = HttpClient.newHttpClient();
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI("http://keycloak:8080/auth/admin/realms/constr-sw-2023-1/users"))
-                .setHeader("Authorization", bearerToken)
-                .GET()
-                .build();
+                HttpRequest request = HttpRequest.newBuilder()
+                                .uri(new URI("http://keycloak:8080/auth/admin/realms/constr-sw-2023-1/users?briefRepresentation=true"))
+                                .setHeader("Authorization", bearerToken)
+                                .GET()
+                                .build();
 
-        // TODO adicionar tratamento de resposta
-        HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                // TODO adicionar tratamento de respostax
+                HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        return response;
-    }
+                return response;
+        }
 
-    public HttpResponse<?> createUser(String bearerToken, String userJson)
-        throws URISyntaxException, IOException, InterruptedException {
-    HttpClient client = HttpClient.newHttpClient();
+        public HttpResponse<?> createUser(String bearerToken, UserDTO userDTO)
+                        throws URISyntaxException, IOException, InterruptedException {
+                HttpClient client = HttpClient.newHttpClient();
 
-    HttpRequest request = HttpRequest.newBuilder()
-            .uri(new URI("http://keycloak:8080/auth/admin/realms/constr-sw-2023-1/users"))
-            .setHeader("Authorization", bearerToken)
-            .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(userJson))
-            .build();
-            
-    HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                ObjectMapper mapper = new ObjectMapper();
+                String json = mapper.writeValueAsString(userDTO);
 
-    return response;
-}
+                HttpRequest request = HttpRequest.newBuilder()
+                                .uri(new URI("http://keycloak:8080/auth/admin/realms/constr-sw-2023-1/users"))
+                                .setHeader("Authorization", bearerToken)
+                                .header("Content-Type", "application/json")
+                                .POST(HttpRequest.BodyPublishers.ofString(json))
+                                .build();
 
-    /**
-     * Retorna um usuário de acordo com o id enviado por parâmetro
-     * 
-     * @param bearerToken Token de autenticação
-     * @param id          Id do usuário
-     * @return
-     * @throws URISyntaxException
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    public HttpResponse<?> getUserById(String bearerToken, String id)
-            throws URISyntaxException, IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
+                HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI("http://keycloak:8080/auth/admin/realms/constr-sw-2023-1/users/" + id))
-                .setHeader("Authorization", bearerToken)
-                .GET()
-                .build();
+                return response;
+        }
 
-        // TODO adicionar tratamento de resposta
-        HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        /**
+         * Retorna um usuário de acordo com o id enviado por parâmetro
+         * 
+         * @param bearerToken Token de autenticação
+         * @param id          Id do usuário
+         * @return
+         * @throws URISyntaxException
+         * @throws IOException
+         * @throws InterruptedException
+         */
+        public HttpResponse<?> getUserById(String bearerToken, String id)
+                        throws URISyntaxException, IOException, InterruptedException {
+                HttpClient client = HttpClient.newHttpClient();
 
-        return response;
-    }
+                HttpRequest request = HttpRequest.newBuilder()
+                                .uri(new URI("http://keycloak:8080/auth/admin/realms/constr-sw-2023-1/users/" + id
+                                                + "?briefRepresentation=true"))
+                                .setHeader("Authorization", bearerToken)
+                                .GET()
+                                .build();
 
-    /**
-     * Deleta um usuário de acordo com o id enviado por parâmetro
-     * 
-     * @param bearerToken Token de autenticação
-     * @param id          Id do usuário
-     * @return
-     * @throws URISyntaxException
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    public HttpResponse<?> deleteUser(String bearerToken, String id)
-            throws URISyntaxException, IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
+                // TODO adicionar tratamento de resposta
+                HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI("http://keycloak:8080/auth/admin/realms/constr-sw-2023-1/users/" + id))
-                .setHeader("Authorization", bearerToken)
-                .DELETE()
-                .build();
+                return response;
+        }
 
-        // TODO adicionar tratamento de resposta
-        HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        /**
+         * Deleta um usuário de acordo com o id enviado por parâmetro
+         * 
+         * @param bearerToken Token de autenticação
+         * @param id          Id do usuário
+         * @return
+         * @throws URISyntaxException
+         * @throws IOException
+         * @throws InterruptedException
+         */
+        public HttpResponse<?> deleteUser(String bearerToken, String id)
+                        throws URISyntaxException, IOException, InterruptedException {
+                HttpClient client = HttpClient.newHttpClient();
 
-        return response;
-    }
+                HttpRequest request = HttpRequest.newBuilder()
+                                .uri(new URI("http://keycloak:8080/auth/admin/realms/constr-sw-2023-1/users/" + id))
+                                .setHeader("Authorization", bearerToken)
+                                .DELETE()
+                                .build();
 
-    /**
-     * Atualiza os dados de um usuário
-     * 
-     * @param bearerToken Token de autenticação
-     * @param id          Id do usuário
-     * @param user        Dados do usuário
-     * @return
-     * @throws URISyntaxException
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    public HttpResponse<?> updateUser(String bearerToken, String id, PutUserDTO user)
-            throws URISyntaxException, IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
+                // TODO adicionar tratamento de resposta
+                HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String userJson = objectMapper.writeValueAsString(user);
+                return response;
+        }
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI("http://keycloak:8080/auth/admin/realms/constr-sw-2023-1/users/" + id))
-                .setHeader("Authorization", bearerToken)
-                .header("Content-Type", "application/json")
-                .PUT(HttpRequest.BodyPublishers.ofString(userJson, StandardCharsets.UTF_8))
-                .build();
+        /**
+         * Atualiza os dados de um usuário
+         * 
+         * @param bearerToken Token de autenticação
+         * @param id          Id do usuário
+         * @param user        Dados do usuário
+         * @return
+         * @throws URISyntaxException
+         * @throws IOException
+         * @throws InterruptedException
+         */
+        public HttpResponse<?> updateUser(String bearerToken, String id, PutUserDTO user)
+                        throws URISyntaxException, IOException, InterruptedException {
+                HttpClient client = HttpClient.newHttpClient();
 
-        HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                ObjectMapper objectMapper = new ObjectMapper();
+                String userJson = objectMapper.writeValueAsString(user);
 
-        return response;
-    }
+                HttpRequest request = HttpRequest.newBuilder()
+                                .uri(new URI("http://keycloak:8080/auth/admin/realms/constr-sw-2023-1/users/" + id))
+                                .setHeader("Authorization", bearerToken)
+                                .header("Content-Type", "application/json")
+                                .PUT(HttpRequest.BodyPublishers.ofString(userJson, StandardCharsets.UTF_8))
+                                .build();
 
-    public HttpResponse<?> updatePassword(String bearerToken, String id, PasswordDTO password)
-            throws URISyntaxException, IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
+                HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String credentialsJson = objectMapper.writeValueAsString(password);
+                return response;
+        }
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI("http://keycloak:8080/auth/admin/realms/constr-sw-2023-1/users/" + id + "/reset-password"))
-                .setHeader("Authorization", bearerToken)
-                .header("Content-Type", "application/json")
-                .PUT(HttpRequest.BodyPublishers.ofString(credentialsJson))
-                .build();
+        public HttpResponse<?> updatePassword(String bearerToken, String id, PasswordDTO password)
+                        throws URISyntaxException, IOException, InterruptedException {
+                HttpClient client = HttpClient.newHttpClient();
 
-        HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                ObjectMapper objectMapper = new ObjectMapper();
+                String credentialsJson = objectMapper.writeValueAsString(password);
 
-        return response;
-    }
+                HttpRequest request = HttpRequest.newBuilder()
+                                .uri(new URI("http://keycloak:8080/auth/admin/realms/constr-sw-2023-1/users/" + id
+                                                + "/reset-password"))
+                                .setHeader("Authorization", bearerToken)
+                                .header("Content-Type", "application/json")
+                                .PUT(HttpRequest.BodyPublishers.ofString(credentialsJson))
+                                .build();
+
+                HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+                return response;
+        }
 }

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.http.HttpResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.oauth.Entity.PasswordDTO;
 import com.example.oauth.Entity.PutUserDTO;
+import com.example.oauth.Entity.UserDTO;
 import com.example.oauth.services.UserService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @CrossOrigin
@@ -45,14 +44,14 @@ public class UserController {
      */
     @GetMapping
     @SecurityRequirement(name = "Authorization")
-    public ResponseEntity<?> getUsers(@Parameter(required = true, description = "Authorization") @RequestHeader("Authorization") @DefaultValue("Authorization") String bearerToken) {
+    public ResponseEntity<?> getUsers(@RequestHeader("Authorization") String bearerToken) {
         try {
             HttpResponse<?> response = userService.getUsers(bearerToken);
-    
+
             ObjectMapper objectMapper = new ObjectMapper();
             String responseBody = (String) response.body();
             JsonNode json = objectMapper.readValue(responseBody, JsonNode.class);
-    
+
             return new ResponseEntity<>(json, HttpStatus.OK);
         } catch (IOException e) {
             // 400 - Bad Request
@@ -66,21 +65,24 @@ public class UserController {
         }
     }
 
-
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Authorization")
     public ResponseEntity<?> createUser(@RequestHeader("Authorization") String bearerToken,
-            @RequestBody String userJson) {
+            @RequestBody UserDTO userDTO) {
         try {
-            HttpResponse<?> response = userService.createUser(bearerToken, userJson);
+            HttpResponse<?> response = userService.createUser(bearerToken, userDTO);
 
             if (response.statusCode() == HttpStatus.CREATED.value()) {
                 return ResponseEntity.ok(response.body());
             } else {
                 return ResponseEntity.status(response.statusCode()).body(response.body());
             }
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro na estrutura da chamada");
+        } catch (InterruptedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access token inválido");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Usuário não possui permissão");
         }
     }
 
@@ -97,10 +99,20 @@ public class UserController {
         try {
             HttpResponse<?> response = userService.getUserById(bearerToken, id);
 
-            return new ResponseEntity<>(response.body(), HttpStatus.OK);
+            ObjectMapper objectMapper = new ObjectMapper();
+            String responseBody = (String) response.body();
+            JsonNode json = objectMapper.readValue(responseBody, JsonNode.class);
+
+            return new ResponseEntity<>(json, HttpStatus.OK);
+        } catch (IOException e) {
+            // 400 - Bad Request
+            return new ResponseEntity<>("Erro na estrutura da chamada", HttpStatus.BAD_REQUEST);
+        } catch (InterruptedException e) {
+            // 401 - Unauthorized
+            return new ResponseEntity<>("username e/ou password inválidos", HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
-            // TODO: handle exception
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            // 404 - Not found
+            return new ResponseEntity<>("o objeto requisitado não foi localizado", HttpStatus.NOT_FOUND);
         }
     }
 
