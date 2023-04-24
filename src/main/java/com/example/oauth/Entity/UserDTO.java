@@ -7,11 +7,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class User {
-    private String clientId;
-    private String clientSecret;
+public class UserDTO {
+    private String id;
     private String username;
-    private String credentials;
-    private String grant_type;
-
+    private String firstName;
+    private String lastName;
+    private boolean enabled;
 }

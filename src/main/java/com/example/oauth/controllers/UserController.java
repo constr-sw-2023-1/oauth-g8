@@ -1,8 +1,10 @@
 package com.example.oauth.controllers;
 
+import java.io.IOException;
 import java.net.http.HttpResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.oauth.Entity.PasswordDTO;
 import com.example.oauth.Entity.PutUserDTO;
 import com.example.oauth.services.UserService;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @CrossOrigin
 @RestController
@@ -37,18 +44,31 @@ public class UserController {
      * @return
      */
     @GetMapping
-    public ResponseEntity<?> getUsers(@RequestHeader("Authorization") String bearerToken) {
+    @SecurityRequirement(name = "Authorization")
+    public ResponseEntity<?> getUsers(@Parameter(required = true, description = "Authorization") @RequestHeader("Authorization") @DefaultValue("Authorization") String bearerToken) {
         try {
             HttpResponse<?> response = userService.getUsers(bearerToken);
-
-            return new ResponseEntity<>(response.body(), HttpStatus.OK);
+    
+            ObjectMapper objectMapper = new ObjectMapper();
+            String responseBody = (String) response.body();
+            JsonNode json = objectMapper.readValue(responseBody, JsonNode.class);
+    
+            return new ResponseEntity<>(json, HttpStatus.OK);
+        } catch (IOException e) {
+            // 400 - Bad Request
+            return new ResponseEntity<>("Erro na estrutura da chamada", HttpStatus.BAD_REQUEST);
+        } catch (InterruptedException e) {
+            // 401 - Unauthorized
+            return new ResponseEntity<>("username e/ou password inválidos", HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
-            // TODO: handle exception
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            // 404 - Not found
+            return new ResponseEntity<>("o objeto requisitado não foi localizado", HttpStatus.NOT_FOUND);
         }
     }
 
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @SecurityRequirement(name = "Authorization")
     public ResponseEntity<?> createUser(@RequestHeader("Authorization") String bearerToken,
             @RequestBody String userJson) {
         try {
@@ -72,6 +92,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/{id}")
+    @SecurityRequirement(name = "Authorization")
     public ResponseEntity<?> getUserById(@RequestHeader("Authorization") String bearerToken, @PathVariable String id) {
         try {
             HttpResponse<?> response = userService.getUserById(bearerToken, id);
@@ -91,6 +112,7 @@ public class UserController {
      * @return
      */
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "Authorization")
     public ResponseEntity<?> deleteUser(@RequestHeader("Authorization") String bearerToken, @PathVariable String id) {
         try {
             HttpResponse<?> response = userService.getUserById(bearerToken, id);
@@ -103,6 +125,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @SecurityRequirement(name = "Authorization")
     public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String bearerToken, @PathVariable String id,
             @RequestBody PutUserDTO user) {
         try {
@@ -116,6 +139,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
+    @SecurityRequirement(name = "Authorization")
     public ResponseEntity<?> updatePassword(@RequestHeader("Authorization") String bearerToken, @PathVariable String id,
             @RequestBody PasswordDTO password) {
         try {
